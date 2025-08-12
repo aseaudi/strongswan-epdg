@@ -161,6 +161,14 @@ METHOD(osmo_epdg_ue_t, get_attributes, linked_list_t *,
 	this->lock->unlock(this->lock);
 }
 
+METHOD(osmo_epdg_ue_t, insert_attribute, void,
+       private_osmo_epdg_ue_t *this, osmo_epdg_attribute_t *entry)
+{
+	this->lock->write_lock(this->lock);
+	this->attributes->insert_last(this->attributes, entry);
+	this->lock->unlock(this->lock);
+}
+
 METHOD(osmo_epdg_ue_t, get, void,
        private_osmo_epdg_ue_t *this)
 {

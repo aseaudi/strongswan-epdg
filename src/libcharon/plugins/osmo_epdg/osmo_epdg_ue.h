@@ -27,6 +27,13 @@
  * @{ @ingroup osmo_epdg
  */
 
+struct osmo_epdg_attribute_t {
+	configuration_attribute_type_t type;
+	chunk_t value;
+	bool valid;
+};
+typedef struct osmo_epdg_attribute_t osmo_epdg_attribute_t;
+
 typedef struct osmo_epdg_ue_t osmo_epdg_ue_t;
 
 enum osmo_epdg_ue_state {
@@ -85,6 +92,11 @@ struct osmo_epdg_ue_t {
 	linked_list_t *(*get_attributes)(osmo_epdg_ue_t *this);
 
 	/**
+	 * Insert osmo_epdg_attribute_t to linked list
+	 */
+	void (*insert_attribute)(osmo_epdg_ue_t *this, osmo_epdg_attribute_t *entry);
+
+	/**
 	 * Get address. Returns NULL or a cloned' host_t object
 	 */
 	host_t *(*get_address)(osmo_epdg_ue_t *this);
@@ -121,13 +133,6 @@ struct osmo_epdg_ue_t {
 	 */
 	void (*destroy)(osmo_epdg_ue_t *this);
 };
-
-struct osmo_epdg_attribute_t {
-	configuration_attribute_type_t type;
-	chunk_t value;
-	bool valid;
-};
-typedef struct osmo_epdg_attribute_t osmo_epdg_attribute_t;
 
 /**
  * Create a osmo_epdg_ue instance.
