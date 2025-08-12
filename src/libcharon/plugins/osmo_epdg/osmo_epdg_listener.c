@@ -188,6 +188,119 @@ METHOD(listener_t, authorize, bool,
 	}
 
 	ue->set_address(ue, address);
+	/* Set attributes based on APCO contents */
+	if (resp->gsup.pco && resp->gsup.pco_len > 0)
+	{
+		/* Print PCO octets for debugging */
+		DBG1(DBG_NET, "epdg_listener: Tunnel Response: IMSI %s: decoding PCO (len=%zu)", imsi, resp->gsup.pco_len);
+		char pco_hex[resp->gsup.pco_len * 2 + 1];
+		for (size_t i = 0; i < resp->gsup.pco_len; i++)
+		{
+			snprintf(&pco_hex[i * 2], 3, "%02x", resp->gsup.pco[i]);
+		}
+		DBG1(DBG_NET, "epdg_listener: Tunnel Response: IMSI %s: PCO: %s", imsi, pco_hex);
+
+		/* APCO (Additional Protocol Configuration Options) definitions */
+		#define APCO_CONFIG_PROTOCOL_PPP    0x00
+
+		/* Common APCO protocol IDs (same as PCO) */
+		#define APCO_PID_DNS_SERVER_IPV4    0x000D
+		#define APCO_PID_P_CSCF_IPV4        0x000C
+
+		/* Decode APCO content as per 3GPP TS 24.008 */
+		uint8_t config_protocol = resp->gsup.pco[0] & 0x07; /* Bits 0-2 */
+		bool ext = resp->gsup.pco[0] & 0x80; /* Bit 8 */
+
+		DBG1(DBG_NET, "APCO: Configuration protocol: %s (0x%02x), ext: %d", 
+			config_protocol == APCO_CONFIG_PROTOCOL_PPP ? "PPP" : "Unknown",
+			config_protocol, ext);
+
+		/* APCO parsing starts at offset 1 */
+		size_t offset = 1;
+		/* +3 for container ID (2) and length field (1) */
+		while (offset + 3 < resp->gsup.pco_len)
+		{
+			uint16_t container_id = (resp->gsup.pco[offset] << 8) | resp->gsup.pco[offset + 1];
+			offset += 2;
+			
+			if (offset >= resp->gsup.pco_len)
+			{
+				DBG1(DBG_NET, "APCO: Truncated at container ID");
+				break;
+			}
+			
+			uint8_t length = resp->gsup.pco[offset++];
+			
+			if (offset + length > resp->gsup.pco_len)
+			{
+				DBG1(DBG_NET, "APCO: Truncated container data");
+				break;
+			}
+			
+			/* Process based on container ID */
+			switch (container_id)
+			{
+				case APCO_PID_DNS_SERVER_IPV4:
+				{
+					if (length == 4)
+					{
+						osmo_epdg_attribute_t *entry;
+						char dns_addr[16]; /* IPv4 address in string format */
+						snprintf(dns_addr, sizeof(dns_addr), "%d.%d.%d.%d",
+							resp->gsup.pco[offset], resp->gsup.pco[offset + 1],
+							resp->gsup.pco[offset + 2], resp->gsup.pco[offset + 3]);
+						DBG1(DBG_NET, "APCO: DNS Server IPv4 (0x%04x): %s",
+							container_id, dns_addr);
+						host_t *host = host_create_from_string_and_family(dns_addr, AF_INET, 0);
+						INIT(entry,
+							.type = INTERNAL_IP4_DNS,
+							.value = chunk_clone(host->get_address(host)),
+							.valid = TRUE,
+						);
+						ue->insert_attribute(ue, entry);
+						host->destroy(host);
+					}
+					else
+					{
+						DBG1(DBG_NET, "APCO: DNS Server IPv4 (0x%04x), invalid length: %d", 
+							container_id, length);
+					}
+				}
+				break;
+				case APCO_PID_P_CSCF_IPV4:
+				{
+					if (length == 4)
+					{
+						osmo_epdg_attribute_t *entry;
+						char p_cscf_addr[16]; /* IPv4 address in string format */
+						snprintf(p_cscf_addr, sizeof(p_cscf_addr), "%d.%d.%d.%d",
+							resp->gsup.pco[offset], resp->gsup.pco[offset + 1],
+							resp->gsup.pco[offset + 2], resp->gsup.pco[offset + 3]);
+						DBG1(DBG_NET, "APCO: P-CSCF IPv4 (0x%04x): %s",
+							container_id, p_cscf_addr);
+						host_t *host = host_create_from_string_and_family(p_cscf_addr, AF_INET, 0);
+						INIT(entry,
+							.type = P_CSCF_IP4_ADDRESS,
+							.value = chunk_clone(host->get_address(host)),
+							.valid = TRUE,
+						);
+						ue->insert_attribute(ue, entry);
+						host->destroy(host);
+					}
+					else
+					{
+						DBG1(DBG_NET, "APCO: P-CSCF IPv4 (0x%04x), invalid length: %d",
+							container_id, length);
+					}
+				}
+				break;
+				default:
+					DBG1(DBG_NET, "APCO: Unknown container ID (0x%04x), length: %d", container_id, length);
+					break;
+			}
+			offset += length;
+		}
+	}
 	ue->set_state(ue, UE_TUNNEL_READY);
 	ue->put(ue);
 
