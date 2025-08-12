@@ -156,8 +156,9 @@ METHOD(osmo_epdg_ue_t, get_state, enum osmo_epdg_ue_state,
 METHOD(osmo_epdg_ue_t, get_attributes, linked_list_t *,
        private_osmo_epdg_ue_t *this)
 {
-	/* TODO: check if we need to also take locking .. also refcounting would be great here */
+	this->lock->read_lock(this->lock);
 	return this->attributes;
+	this->lock->unlock(this->lock);
 }
 
 METHOD(osmo_epdg_ue_t, get, void,
@@ -220,6 +221,7 @@ osmo_epdg_ue_t *osmo_epdg_ue_create(uint32_t id, const char *imsi, const char *a
 		 .get_state = _get_state,
 		 .set_state = _set_state,
 		 .get_attributes = _get_attributes,
+		 .insert_attribute = _insert_attribute,
 		 .destroy = _destroy,
 	     },
 	     .apn = strdup(apn),
@@ -231,7 +233,7 @@ osmo_epdg_ue_t *osmo_epdg_ue_create(uint32_t id, const char *imsi, const char *a
 	     .refcount = 1,
 	     );
 
-	/* hardcode P-CSCF and DNS entry */
+	/* Hardcode P-CSCF and DNS entry */
 	osmo_epdg_attribute_t *entry;
 	host_t *host = host_create_from_string_and_family("10.74.0.31", AF_INET, 0);
 	INIT(entry,
