@@ -101,7 +101,7 @@ osmo_epdg_gsup_response_t *osmo_epdg_send_auth_request(private_osmo_epdg_provide
 	printf("XXXXXX osmo_epdg_provider get_quintuplet apn: %s\n", apn);
 
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
-			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
+			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, resync ? rand : NULL, resync ? auts : NULL, apn, PDP_TYPE_N_IETF_IPv4);
 
 	return resp;
 }
@@ -216,7 +216,7 @@ METHOD(simaka_provider_t, resync, bool,
 	/* prepare and fill up the struct */
 	/* send pdu blocking */
 
-	osmo_epdg_gsup_response_t *resp = osmo_epdg_send_auth_request(this, id, false, rand, auts);
+	osmo_epdg_gsup_response_t *resp = osmo_epdg_send_auth_request(this, id, TRUE, rand, auts);
 
 	if (!resp)
 	{
