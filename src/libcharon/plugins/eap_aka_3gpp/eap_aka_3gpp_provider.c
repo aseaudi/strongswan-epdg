@@ -168,8 +168,7 @@ METHOD(simaka_provider_t, resync, bool,
 	printf("\n");
 
 	/* generate resync XMAC-S... */
-	// memset(amfs, 0, AKA_AMF_LEN);
-	memset(amfs, 0x8000, AKA_AMF_LEN);
+	memset(amfs, 0, AKA_AMF_LEN);
 
 	if (!this->f->f1star(this->f, k, opc, rand, sqn, amfs, xmacs))
 	{
