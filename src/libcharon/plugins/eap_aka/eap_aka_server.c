@@ -215,10 +215,15 @@ static status_t challenge(private_eap_aka_server_t *this, eap_payload_t **out)
 	message = simaka_message_create(TRUE, this->identifier++, EAP_AKA,
 									AKA_CHALLENGE, this->crypto);
 	message->add_attribute(message, AT_RAND, this->rand);
+	printf("XXXXXX eap_aka_server challenge rand: ");
+	for (int i = 0; i < 16; i++) {
+		printf("%02X ", (uint8_t)autn[i]);
+	}
+	printf("\n");
 	message->add_attribute(message, AT_AUTN, chunk_create(autn, AKA_AUTN_LEN));
 	printf("XXXXXX eap_aka_server challenge autn: ");
 	for (int i = 0; i < 16; i++) {
-		printf("%02X ", autn[i]);
+		printf("%02X ", (uint8_t)autn[i]);
 	}
 	printf("\n");
 	id = this->mgr->provider_gen_reauth(this->mgr, this->permanent, mk.ptr);
@@ -310,6 +315,7 @@ METHOD(eap_method_t, initiate, status_t,
 static status_t process_identity(private_eap_aka_server_t *this,
 								 simaka_message_t *in, eap_payload_t **out)
 {
+	printf("XXXXXX eap_aka_server process_identity\n");
 	identification_t *permanent, *id;
 	enumerator_t *enumerator;
 	simaka_attribute_t type;
@@ -400,6 +406,7 @@ static status_t process_identity(private_eap_aka_server_t *this,
 static status_t process_challenge(private_eap_aka_server_t *this,
 								  simaka_message_t *in)
 {
+	printf("XXXXXX eap_aka_server process_challenge\n");
 	enumerator_t *enumerator;
 	simaka_attribute_t type;
 	chunk_t data, res = chunk_empty;
@@ -451,6 +458,7 @@ static status_t process_challenge(private_eap_aka_server_t *this,
 static status_t process_reauthentication(private_eap_aka_server_t *this,
 									simaka_message_t *in, eap_payload_t **out)
 {
+	printf("XXXXXX eap_aka_server process_reauthentication\n");
 	enumerator_t *enumerator;
 	simaka_attribute_t type;
 	chunk_t data, counter = chunk_empty;
@@ -512,6 +520,7 @@ static status_t process_reauthentication(private_eap_aka_server_t *this,
 static status_t process_synchronize(private_eap_aka_server_t *this,
 									simaka_message_t *in, eap_payload_t **out)
 {
+	printf("XXXXXX eap_aka_server process_syncronize\n");
 	enumerator_t *enumerator;
 	simaka_attribute_t type;
 	chunk_t data, auts = chunk_empty;
@@ -567,6 +576,7 @@ static status_t process_synchronize(private_eap_aka_server_t *this,
 static status_t process_client_error(private_eap_aka_server_t *this,
 									 simaka_message_t *in)
 {
+	printf("XXXXXX eap_aka_server process_client_error\n");
 	enumerator_t *enumerator;
 	simaka_attribute_t type;
 	chunk_t data;
@@ -597,6 +607,7 @@ static status_t process_client_error(private_eap_aka_server_t *this,
 static status_t process_authentication_reject(private_eap_aka_server_t *this,
 											  simaka_message_t *in)
 {
+	printf("XXXXXX eap_aka_server process_authentication_reject\n");
 	DBG1(DBG_IKE, "received %N, authentication failed",
 		 simaka_subtype_names, in->get_subtype(in));
 	return FAILED;

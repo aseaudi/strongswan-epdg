@@ -78,6 +78,8 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 	char rand[AKA_RAND_LEN], char xres[AKA_RES_MAX], int *xres_len,
 	char ck[AKA_CK_LEN], char ik[AKA_IK_LEN], char autn[AKA_AUTN_LEN])
 {
+	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet\n");
+
 	char apn[APN_MAXLEN];
 	char imsi[17] = {0};
 	ike_sa_t *ike_sa;
@@ -100,6 +102,8 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 		DBG1(DBG_NET, "epdg: get_quintuplet: Can't get APN.");
 		return FALSE;
 	}
+
+	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet apn: %s\n", apn);
 
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
 			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
@@ -129,7 +133,7 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 	memcpy(autn, auth->autn, AKA_AUTN_LEN);
 	memcpy(xres, auth->res, auth->res_len);
 	*xres_len = auth->res_len;
-	
+
 	osmo_epdg_gsup_resp_free(resp);
 	return TRUE;
 err:

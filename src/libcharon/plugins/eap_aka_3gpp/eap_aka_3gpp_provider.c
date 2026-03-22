@@ -139,7 +139,7 @@ METHOD(simaka_provider_t, resync, bool,
 
 	printf("XXXXXX eap_aka_3gpp_provider resync auts: ");
 	for (int i = 0; i < 14; i++) {
-		printf("%02X ", auts[i]);
+		printf("%02X ", (uint8_t)auts[i]);
 	}
 	printf("\n");
 
@@ -163,7 +163,7 @@ METHOD(simaka_provider_t, resync, bool,
 
 	printf("XXXXXX eap_aka_3gpp_provider resync memxor sqn: ");
 	for (int i = 0; i < 6; i++) {
-		printf("%02X ", auts[i]);
+		printf("%02X ", (uint8_t)auts[i]);
 	}
 	printf("\n");
 
