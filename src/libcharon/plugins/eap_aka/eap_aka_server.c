@@ -217,7 +217,7 @@ static status_t challenge(private_eap_aka_server_t *this, eap_payload_t **out)
 	message->add_attribute(message, AT_RAND, this->rand);
 	printf("XXXXXX eap_aka_server challenge rand: ");
 	for (int i = 0; i < 16; i++) {
-		printf("%02X ", (uint8_t)autn[i]);
+		printf("%02X ", (uint8_t)rand[i]);
 	}
 	printf("\n");
 	message->add_attribute(message, AT_AUTN, chunk_create(autn, AKA_AUTN_LEN));

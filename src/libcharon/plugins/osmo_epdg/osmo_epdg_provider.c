@@ -78,7 +78,7 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 	char rand[AKA_RAND_LEN], char xres[AKA_RES_MAX], int *xres_len,
 	char ck[AKA_CK_LEN], char ik[AKA_IK_LEN], char autn[AKA_AUTN_LEN])
 {
-	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet\n");
+	printf("XXXXXX osmo_epdg_provider get_quintuplet\n");
 
 	char apn[APN_MAXLEN];
 	char imsi[17] = {0};
@@ -89,6 +89,7 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 		DBG1(DBG_NET, "epdg: get_quintuplet: Can't find IMSI in EAP identity.");
 		return FALSE;
 	}
+	printf("XXXXXX osmo_epdg_provider get_quintuplet imsi: %s\n", imsi);
 
 	ike_sa = charon->bus->get_sa(charon->bus);
 	if (!ike_sa)
@@ -103,7 +104,7 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 		return FALSE;
 	}
 
-	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet apn: %s\n", apn);
+	printf("XXXXXX osmo_epdg_provider get_quintuplet apn: %s\n", apn);
 
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
 			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
@@ -134,6 +135,21 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 	memcpy(xres, auth->res, auth->res_len);
 	*xres_len = auth->res_len;
 
+	printf("XXXXXX osmo_epdg_provider get_quintuplet rand: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+	rand	[0], rand	[1], rand	[2], rand	[3], rand	[4], rand	[5], rand	[6], rand	[7],
+	rand	[8], rand	[9], rand	[10], rand	[11], rand	[12], rand	[13], rand	[14], rand	[15]);
+	printf("XXXXXX osmo_epdg_provider get_quintuplet ck: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+	ck	[0], ck	[1], ck	[2], ck	[3], ck	[4], ck	[5], ck	[6], ck	[7],
+	ck	[8], ck	[9], ck	[10], ck	[11], ck	[12], ck	[13], ck	[14], ck	[15]);
+	printf("XXXXXX osmo_epdg_provider get_quintuplet ik: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+	ik	[0], ik	[1], ik	[2], ik	[3], ik	[4], ik	[5], ik	[6], ik	[7],
+	ik	[8], ik	[9], ik	[10], ik	[11], ik	[12], ik	[13], ik	[14], ik	[15]);
+	printf("XXXXXX osmo_epdg_provider get_quintuplet autn: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+	autn	[0], autn	[1], autn	[2], autn	[3], autn	[4], autn	[5], autn	[6], autn	[7],
+	autn	[8], autn	[9], autn	[10], autn	[11], autn	[12], autn	[13], autn	[14], autn	[15]);
+	printf("XXXXXX osmo_epdg_provider get_quintuplet xres: %02x%02x%02x%02x%02x%02x%02x%02x\n",
+	xres[0], xres[1], xres[2], xres[3], xres[4], xres[5], xres[6], xres[7]);
+
 	osmo_epdg_gsup_resp_free(resp);
 	return TRUE;
 err:
@@ -145,7 +161,7 @@ METHOD(simaka_provider_t, resync, bool,
 	private_osmo_epdg_provider_t *this, identification_t *id,
 	char rand[AKA_RAND_LEN], char auts[AKA_AUTS_LEN])
 {
-	printf("XXXXXX eap_aka_3gpp_provider resync\n");
+	printf("XXXXXX osmo_epdg_provider resync\n");
 	/* TODO: invalid auth data received */
 	/* prepare and fill up the struct */
 	/* send pdu blocking */
