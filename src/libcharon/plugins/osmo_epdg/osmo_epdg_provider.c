@@ -73,13 +73,7 @@ bool osmo_epdg_get_k(identification_t *id, char k[AKA_K_LEN])
 	return TRUE;
 }
 
-METHOD(simaka_provider_t, get_quintuplet, bool,
-	private_osmo_epdg_provider_t *this, identification_t *id,
-	char rand[AKA_RAND_LEN], char xres[AKA_RES_MAX], int *xres_len,
-	char ck[AKA_CK_LEN], char ik[AKA_IK_LEN], char autn[AKA_AUTN_LEN])
-{
-	printf("XXXXXX osmo_epdg_provider get_quintuplet\n");
-
+osmo_epdg_gsup_response_t *osmo_epdg_send_auth_request(private_osmo_epdg_provider_t *this, identification_t *id, bool resync, char rand[AKA_RAND_LEN], char auts[AKA_AUTS_LEN]) {
 	char apn[APN_MAXLEN];
 	char imsi[17] = {0};
 	ike_sa_t *ike_sa;
@@ -108,6 +102,45 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
 			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
+}
+
+METHOD(simaka_provider_t, get_quintuplet, bool,
+	private_osmo_epdg_provider_t *this, identification_t *id,
+	char rand[AKA_RAND_LEN], char xres[AKA_RES_MAX], int *xres_len,
+	char ck[AKA_CK_LEN], char ik[AKA_IK_LEN], char autn[AKA_AUTN_LEN])
+{
+	printf("XXXXXX osmo_epdg_provider get_quintuplet\n");
+
+	// char apn[APN_MAXLEN];
+	// char imsi[17] = {0};
+	// ike_sa_t *ike_sa;
+
+	// if (epdg_get_imsi(id, imsi, sizeof(imsi) - 1))
+	// {
+	// 	DBG1(DBG_NET, "epdg: get_quintuplet: Can't find IMSI in EAP identity.");
+	// 	return FALSE;
+	// }
+	// printf("XXXXXX osmo_epdg_provider get_quintuplet imsi: %s\n", imsi);
+
+	// ike_sa = charon->bus->get_sa(charon->bus);
+	// if (!ike_sa)
+	// {
+	// 	DBG1(DBG_NET, "epdg: get_quintuplet: Can't get ike_sa.");
+	// 	return FALSE;
+	// }
+
+	// if (epdg_get_apn(ike_sa, apn, APN_MAXLEN))
+	// {
+	// 	DBG1(DBG_NET, "epdg: get_quintuplet: Can't get APN.");
+	// 	return FALSE;
+	// }
+
+	// printf("XXXXXX osmo_epdg_provider get_quintuplet apn: %s\n", apn);
+
+	// osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
+	// 		this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
+
+	osmo_epdg_gsup_response_t *resp = osmo_epdg_send_auth_request(this, id, false, NULL, NULL);
 	if (!resp)
 	{
 		DBG1(DBG_NET, "epdg_provider: Failed to send auth request.");
@@ -180,6 +213,21 @@ METHOD(simaka_provider_t, resync, bool,
 	/* TODO: invalid auth data received */
 	/* prepare and fill up the struct */
 	/* send pdu blocking */
+
+	osmo_epdg_gsup_response_t *resp = osmo_epdg_send_auth_request(this, id, false, rand, auts);
+
+	if (!resp)
+	{
+		DBG1(DBG_NET, "epdg_provider: Failed to send auth resync request.");
+		return FALSE;
+	}
+
+	if (resp->gsup.message_type != OSMO_GSUP_MSGT_SEND_AUTH_INFO_RESULT)
+	{
+		DBG1(DBG_NET, "epdg_provider: Resync SendAuthInfo Error! Cause: %02x", resp->gsup.cause);
+		goto err;
+	}
+
 	return FALSE;
 }
 
