@@ -47,6 +47,7 @@ METHOD(listener_t, eap_authorize, bool,
 	private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa,
 	identification_t *id, bool final, bool *success)
 {
+	fmt.printf("XXXXXX osmo_epdg_listener eap_authorize\n");
 	char imsi[16] = {0};
 	osmo_epdg_ue_t *ue = NULL;
 	osmo_epdg_gsup_response_t *resp = NULL;
@@ -104,6 +105,7 @@ METHOD(listener_t, authorize, bool,
 	private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa,
 	bool final, bool *success)
 {
+	fmt.printf("XXXXXX osmo_epdg_listener authorize\n");
 	identification_t* imsi_id;
 	char imsi[16] = {0};
 	osmo_epdg_ue_t *ue = NULL;
@@ -211,7 +213,7 @@ METHOD(listener_t, authorize, bool,
 		uint8_t config_protocol = resp->gsup.pco[0] & 0x07; /* Bits 0-2 */
 		bool ext = resp->gsup.pco[0] & 0x80; /* Bit 8 */
 
-		DBG1(DBG_NET, "APCO: Configuration protocol: %s (0x%02x), ext: %d", 
+		DBG1(DBG_NET, "APCO: Configuration protocol: %s (0x%02x), ext: %d",
 			config_protocol == APCO_CONFIG_PROTOCOL_PPP ? "PPP" : "Unknown",
 			config_protocol, ext);
 
@@ -222,21 +224,21 @@ METHOD(listener_t, authorize, bool,
 		{
 			uint16_t container_id = (resp->gsup.pco[offset] << 8) | resp->gsup.pco[offset + 1];
 			offset += 2;
-			
+
 			if (offset >= resp->gsup.pco_len)
 			{
 				DBG1(DBG_NET, "APCO: Truncated at container ID");
 				break;
 			}
-			
+
 			uint8_t length = resp->gsup.pco[offset++];
-			
+
 			if (offset + length > resp->gsup.pco_len)
 			{
 				DBG1(DBG_NET, "APCO: Truncated container data");
 				break;
 			}
-			
+
 			/* Process based on container ID */
 			switch (container_id)
 			{
@@ -262,7 +264,7 @@ METHOD(listener_t, authorize, bool,
 					}
 					else
 					{
-						DBG1(DBG_NET, "APCO: DNS Server IPv4 (0x%04x), invalid length: %d", 
+						DBG1(DBG_NET, "APCO: DNS Server IPv4 (0x%04x), invalid length: %d",
 							container_id, length);
 					}
 				}
@@ -326,6 +328,7 @@ err:
 METHOD(listener_t, ike_updown, bool,
        private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa, bool up)
 {
+	fmt.printf("XXXXXX osmo_epdg_listener ike_updown\n");
 	char imsi[16] = {0};
 	if (epdg_get_imsi_ike(ike_sa, imsi, sizeof(imsi)))
 	{

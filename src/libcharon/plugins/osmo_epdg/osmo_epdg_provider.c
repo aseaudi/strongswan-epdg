@@ -145,6 +145,7 @@ METHOD(simaka_provider_t, resync, bool,
 	private_osmo_epdg_provider_t *this, identification_t *id,
 	char rand[AKA_RAND_LEN], char auts[AKA_AUTS_LEN])
 {
+	printf("XXXXXX eap_aka_3gpp_provider resync\n");
 	/* TODO: invalid auth data received */
 	/* prepare and fill up the struct */
 	/* send pdu blocking */
@@ -162,6 +163,7 @@ METHOD(attribute_provider_t, acquire_address, host_t*,
 	private_osmo_epdg_provider_t *this, linked_list_t *pools, ike_sa_t *ike_sa,
 	host_t *requested)
 {
+	fmt.printf("XXXXXX osmo_epdg_provider acquire_address\n");
 	/* yes this hurts. We can either move the attribute provider out of this class or do some pointer arithmetic to get the right this object */
 	this = container_of((void *) this, private_osmo_epdg_provider_t, public.attribute);
 	if (requested->get_family(requested) != AF_INET)
@@ -190,6 +192,7 @@ METHOD(attribute_provider_t, release_address, bool,
 	private_osmo_epdg_provider_t *this, linked_list_t *pools, host_t *address,
 	ike_sa_t *ike_sa)
 {
+	fmt.printf("XXXXXX osmo_epdg_provider release_address\n");
 	this = container_of((void *) this, private_osmo_epdg_provider_t, public.attribute);
 	osmo_epdg_ue_t *ue = this->db->get_subscriber_ike(this->db, ike_sa);
 	host_t *ue_address = ue->get_address(ue);
