@@ -216,6 +216,11 @@ static status_t challenge(private_eap_aka_server_t *this, eap_payload_t **out)
 									AKA_CHALLENGE, this->crypto);
 	message->add_attribute(message, AT_RAND, this->rand);
 	message->add_attribute(message, AT_AUTN, chunk_create(autn, AKA_AUTN_LEN));
+	printf("XXXXXX eap_aka_server challenge autn: ");
+	for (int i = 0; i < 16; i++) {
+		printf("%02X ", autn[i]);
+	}
+	printf("\n");
 	id = this->mgr->provider_gen_reauth(this->mgr, this->permanent, mk.ptr);
 	free(mk.ptr);
 	if (id)

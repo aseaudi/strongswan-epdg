@@ -81,6 +81,12 @@ METHOD(simaka_provider_t, get_quintuplet, bool,
 	char rand[AKA_RAND_LEN], char xres[AKA_RES_MAX], int *xres_len,
 	char ck[AKA_CK_LEN], char ik[AKA_IK_LEN], char autn[AKA_AUTN_LEN])
 {
+	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet\n");
+	printf("XXXXXX eap_aka_3gpp_provider get_quintuplet sqn: ");
+	for (int i = 0; i < 6; i++) {
+		printf("%02X ", this->sqn[i]);
+	}
+	printf("\n");
 	rng_t *rng;
 	uint8_t maca[AKA_MAC_LEN], ak[AKA_AK_LEN], k[AKA_K_LEN], opc[AKA_OPC_LEN];
 
@@ -131,12 +137,18 @@ METHOD(simaka_provider_t, resync, bool,
 	uint8_t aks[AKA_AK_LEN], k[AKA_K_LEN], opc[AKA_OPC_LEN], amfs[AKA_AMF_LEN],
 			xmacs[AKA_MAC_LEN];
 
+	printf("XXXXXX eap_aka_3gpp_provider resync auts: ");
+	for (int i = 0; i < 14; i++) {
+		printf("%02X ", auts[i]);
+	}
+	printf("\n");
+
 	if (!eap_aka_3gpp_get_k_opc(id, k, opc))
 	{
 		DBG1(DBG_IKE, "no EAP key found for %Y to authenticate with AKA", id);
 		return FALSE;
 	}
-	DBG4(DBG_IKE, "EAP key found for id %Y, using K %b and OPc %b", id, k,
+	DBG1(DBG_IKE, "EAP key found for id %Y, using K %b and OPc %b", id, k,
 		 AKA_K_LEN, opc, AKA_OPC_LEN);
 
 	/* get SQNms out of the AUTS the card created as:
@@ -149,8 +161,16 @@ METHOD(simaka_provider_t, resync, bool,
 	}
 	memxor(sqn, aks, AKA_AK_LEN);
 
+	printf("XXXXXX eap_aka_3gpp_provider resync memxor sqn: ");
+	for (int i = 0; i < 6; i++) {
+		printf("%02X ", auts[i]);
+	}
+	printf("\n");
+
 	/* generate resync XMAC-S... */
-	memset(amfs, 0, AKA_AMF_LEN);
+	// memset(amfs, 0, AKA_AMF_LEN);
+	memset(amfs, 0x8000, AKA_AMF_LEN);
+
 	if (!this->f->f1star(this->f, k, opc, rand, sqn, amfs, xmacs))
 	{
 		return FALSE;

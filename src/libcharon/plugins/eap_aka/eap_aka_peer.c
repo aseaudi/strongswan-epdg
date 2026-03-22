@@ -227,6 +227,11 @@ static status_t process_challenge(private_eap_aka_peer_t *this,
 				break;
 			case AT_AUTN:
 				autn = data;
+				printf("XXXXXX eap_aka_peer autn: ");
+				for (int i = 0; i < autn.len; i++) {
+					printf("%02X ", autn.ptr[i]);
+				}
+				printf("\n");
 				break;
 			default:
 				if (!simaka_attribute_skippable(type))
