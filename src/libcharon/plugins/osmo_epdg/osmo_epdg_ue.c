@@ -84,35 +84,35 @@ struct private_osmo_epdg_ue_t {
 METHOD(osmo_epdg_ue_t, get_imsi, const char *,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_imsi\n");
+	printf("XXXXXX osmo_epdg_ue_t get_imsi\n");
 	return this->imsi;
 }
 
 METHOD(osmo_epdg_ue_t, get_apn, const char *,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_apn\n");
+	printf("XXXXXX osmo_epdg_ue_t get_apn\n");
 	return this->apn;
 }
 
 METHOD(osmo_epdg_ue_t, get_id, uint32_t,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_id\n");
+	printf("XXXXXX osmo_epdg_ue_t get_id\n");
 	return this->id;
 }
 
 METHOD(osmo_epdg_ue_t, set_id, void,
        private_osmo_epdg_ue_t *this, uint32_t unique_id)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t set_id\n");
+	printf("XXXXXX osmo_epdg_ue_t set_id\n");
 	this->id = unique_id;
 }
 
 METHOD(osmo_epdg_ue_t, set_address, void,
        private_osmo_epdg_ue_t *this, host_t *address)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t set_address\n");
+	printf("XXXXXX osmo_epdg_ue_t set_address\n");
 	this->lock->write_lock(this->lock);
 	if (this->address)
 	{
@@ -125,7 +125,7 @@ METHOD(osmo_epdg_ue_t, set_address, void,
 METHOD(osmo_epdg_ue_t, get_address, host_t *,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_address\n");
+	printf("XXXXXX osmo_epdg_ue_t get_address\n");
 	host_t *address = NULL;
 
 	this->lock->read_lock(this->lock);
@@ -141,7 +141,7 @@ METHOD(osmo_epdg_ue_t, get_address, host_t *,
 METHOD(osmo_epdg_ue_t, set_state, void,
        private_osmo_epdg_ue_t *this, enum osmo_epdg_ue_state state)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t set_state\n");
+	printf("XXXXXX osmo_epdg_ue_t set_state\n");
 	this->lock->write_lock(this->lock);
 	/* TODO: implement a FSM. At least we can get debug information out of it. */
 	this->state = state;
@@ -151,7 +151,7 @@ METHOD(osmo_epdg_ue_t, set_state, void,
 METHOD(osmo_epdg_ue_t, get_state, enum osmo_epdg_ue_state,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_state\n");
+	printf("XXXXXX osmo_epdg_ue_t get_state\n");
 	enum osmo_epdg_ue_state state;
 	this->lock->read_lock(this->lock);
 	/* TODO: implement a FSM. At least we can get debug information out of it. */
@@ -164,7 +164,7 @@ METHOD(osmo_epdg_ue_t, get_state, enum osmo_epdg_ue_state,
 METHOD(osmo_epdg_ue_t, get_attributes, linked_list_t *,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get_attributes\n");
+	printf("XXXXXX osmo_epdg_ue_t get_attributes\n");
 	this->lock->read_lock(this->lock);
 	return this->attributes;
 	this->lock->unlock(this->lock);
@@ -173,7 +173,7 @@ METHOD(osmo_epdg_ue_t, get_attributes, linked_list_t *,
 METHOD(osmo_epdg_ue_t, insert_attribute, void,
        private_osmo_epdg_ue_t *this, osmo_epdg_attribute_t *entry)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t insert_attribute\n");
+	printf("XXXXXX osmo_epdg_ue_t insert_attribute\n");
 	this->lock->write_lock(this->lock);
 	this->attributes->insert_last(this->attributes, entry);
 	this->lock->unlock(this->lock);
@@ -182,14 +182,14 @@ METHOD(osmo_epdg_ue_t, insert_attribute, void,
 METHOD(osmo_epdg_ue_t, get, void,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t get\n");
+	printf("XXXXXX osmo_epdg_ue_t get\n");
 	ref_get(&this->refcount);
 }
 
 METHOD(osmo_epdg_ue_t, put, void,
        private_osmo_epdg_ue_t *this)
 {
-	fmt.printf("XXXXXX osmo_epdg_ue_t put\n");
+	printf("XXXXXX osmo_epdg_ue_t put\n");
 	if (ref_put(&this->refcount))
 	{
 		this->public.destroy(&this->public);

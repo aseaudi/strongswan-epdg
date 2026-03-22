@@ -47,7 +47,7 @@ METHOD(listener_t, eap_authorize, bool,
 	private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa,
 	identification_t *id, bool final, bool *success)
 {
-	fmt.printf("XXXXXX osmo_epdg_listener eap_authorize\n");
+	printf("XXXXXX osmo_epdg_listener eap_authorize\n");
 	char imsi[16] = {0};
 	osmo_epdg_ue_t *ue = NULL;
 	osmo_epdg_gsup_response_t *resp = NULL;
@@ -105,7 +105,7 @@ METHOD(listener_t, authorize, bool,
 	private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa,
 	bool final, bool *success)
 {
-	fmt.printf("XXXXXX osmo_epdg_listener authorize\n");
+	printf("XXXXXX osmo_epdg_listener authorize\n");
 	identification_t* imsi_id;
 	char imsi[16] = {0};
 	osmo_epdg_ue_t *ue = NULL;
@@ -328,7 +328,7 @@ err:
 METHOD(listener_t, ike_updown, bool,
        private_osmo_epdg_listener_t *this, ike_sa_t *ike_sa, bool up)
 {
-	fmt.printf("XXXXXX osmo_epdg_listener ike_updown\n");
+	printf("XXXXXX osmo_epdg_listener ike_updown\n");
 	char imsi[16] = {0};
 	if (epdg_get_imsi_ike(ike_sa, imsi, sizeof(imsi)))
 	{

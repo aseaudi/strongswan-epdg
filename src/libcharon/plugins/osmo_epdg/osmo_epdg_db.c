@@ -53,7 +53,7 @@ struct private_osmo_epdg_db_t {
 METHOD(osmo_epdg_db_t, create_subscriber, osmo_epdg_ue_t *,
 	private_osmo_epdg_db_t *this, ike_sa_t *ike_sa)
 {
-	fmt.printf("XXXXXX osmo_epdg_db create_subscriber\n");
+	printf("XXXXXX osmo_epdg_db create_subscriber\n");
 	osmo_epdg_ue_t *ue;
 	char imsi[16] = {0};
 	char apn[APN_MAXLEN];
@@ -96,7 +96,7 @@ METHOD(osmo_epdg_db_t, create_subscriber, osmo_epdg_ue_t *,
 METHOD(osmo_epdg_db_t, get_subscriber, osmo_epdg_ue_t *,
        private_osmo_epdg_db_t *this, char *imsi)
 {
-	fmt.printf("XXXXXX osmo_epdg_db get_subscriber\n");
+	printf("XXXXXX osmo_epdg_db get_subscriber\n");
 	osmo_epdg_ue_t *ue;
 	this->lock->read_lock(this->lock);
 	ue = this->subscribers_imsi->get(this->subscribers_imsi, imsi);
@@ -111,7 +111,7 @@ METHOD(osmo_epdg_db_t, get_subscriber, osmo_epdg_ue_t *,
 METHOD(osmo_epdg_db_t, get_subscriber_ike, osmo_epdg_ue_t *,
        private_osmo_epdg_db_t *this, ike_sa_t *ike_sa)
 {
-	fmt.printf("XXXXXX osmo_epdg_db get_subscriber_ike\n");
+	printf("XXXXXX osmo_epdg_db get_subscriber_ike\n");
 	char imsi[16] = {0};
 
 	if (epdg_get_imsi_ike(ike_sa, imsi, sizeof(imsi)))
@@ -125,7 +125,7 @@ METHOD(osmo_epdg_db_t, get_subscriber_ike, osmo_epdg_ue_t *,
 METHOD(osmo_epdg_db_t, get_subscriber_id, osmo_epdg_ue_t *,
        private_osmo_epdg_db_t *this, uint32_t unique_id)
 {
-	fmt.printf("XXXXXX osmo_epdg_db get_subscriber_id\n");
+	printf("XXXXXX osmo_epdg_db get_subscriber_id\n");
 	/* This could be optimize, but keep it is for now */
 	osmo_epdg_ue_t *ue = NULL;
 	enumerator_t *enumerator;
@@ -154,7 +154,7 @@ out:
 METHOD(osmo_epdg_db_t, remove_subscriber, void,
 	private_osmo_epdg_db_t *this, const char *imsi)
 {
-	fmt.printf("XXXXXX osmo_epdg_db remove_subscriber\n");
+	printf("XXXXXX osmo_epdg_db remove_subscriber\n");
 	osmo_epdg_ue_t *ue;
 
 	this->lock->write_lock(this->lock);
