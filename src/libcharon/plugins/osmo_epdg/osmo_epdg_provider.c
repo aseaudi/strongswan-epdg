@@ -102,6 +102,8 @@ osmo_epdg_gsup_response_t *osmo_epdg_send_auth_request(private_osmo_epdg_provide
 
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
 			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
+
+	return resp;
 }
 
 METHOD(simaka_provider_t, get_quintuplet, bool,
@@ -227,6 +229,8 @@ METHOD(simaka_provider_t, resync, bool,
 		DBG1(DBG_NET, "epdg_provider: Resync SendAuthInfo Error! Cause: %02x", resp->gsup.cause);
 		return FALSE;
 	}
+
+	osmo_epdg_gsup_resp_free(resp);
 
 	return TRUE;
 }
