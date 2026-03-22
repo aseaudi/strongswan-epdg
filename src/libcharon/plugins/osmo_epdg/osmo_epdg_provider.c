@@ -225,10 +225,10 @@ METHOD(simaka_provider_t, resync, bool,
 	if (resp->gsup.message_type != OSMO_GSUP_MSGT_SEND_AUTH_INFO_RESULT)
 	{
 		DBG1(DBG_NET, "epdg_provider: Resync SendAuthInfo Error! Cause: %02x", resp->gsup.cause);
-		goto err;
+		return FALSE;
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 #ifndef container_of
