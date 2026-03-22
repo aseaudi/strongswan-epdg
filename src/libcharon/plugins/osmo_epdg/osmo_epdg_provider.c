@@ -100,13 +100,15 @@ osmo_epdg_gsup_response_t *osmo_epdg_send_auth_request(private_osmo_epdg_provide
 
 	printf("XXXXXX osmo_epdg_provider get_quintuplet apn: %s\n", apn);
 
-
+	if (resync) {
 	chunk_t rand_chunk = chunk_create(rand, AKA_RAND_LEN);
     chunk_t auts_chunk = chunk_create(auts, AKA_AUTS_LEN);
-
 	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
-			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, resync ? rand_chunk : NULL, resync ? auts_chunk : NULL, apn, PDP_TYPE_N_IETF_IPv4);
-
+			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, rand_chunk, auts_chunk, apn, PDP_TYPE_N_IETF_IPv4);
+	return resp;
+	}
+	osmo_epdg_gsup_response_t *resp = this->gsup->send_auth_request(
+			this->gsup, imsi, OSMO_GSUP_CN_DOMAIN_PS, NULL, NULL, apn, PDP_TYPE_N_IETF_IPv4);
 	return resp;
 }
 
