@@ -429,6 +429,11 @@ static status_t process_challenge(private_eap_aka_server_t *this,
 		{
 			case AT_RES:
 				res = data;
+				printf("XXXXXX eap_aka_server process_challenge res: ");
+				for (int i = 0; i < 8; i++) {
+					printf("%02X ", (uint8_t)res.ptr[i]);
+				}
+				printf("\n");
 				break;
 			default:
 				if (!simaka_attribute_skippable(type))
